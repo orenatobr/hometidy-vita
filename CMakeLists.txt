@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
-project(VitaTidy C)
+project(HomeTidy C)
+# VERSION is the single source for the app, the package, the artwork and the release tag.
+file(STRINGS VERSION HOMETIDY_VERSION LIMIT_COUNT 1)
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS VERSION)
 set(CMAKE_C_STANDARD 11)
 
 set(CORE_SOURCES
@@ -11,20 +14,25 @@ set(SQLITE_DEFS SQLITE_OS_OTHER=1 SQLITE_THREADSAFE=0 SQLITE_OMIT_LOAD_EXTENSION
 
 if(VITA)
   include("$ENV{VITASDK}/share/vita.cmake" REQUIRED)
-  set(VITA_APP_NAME "VitaTidy")
-  set(VITA_TITLEID "VTDY00001")
-  set(VITA_VERSION "01.00")
+  set(VITA_APP_NAME "HomeTidy")
+  set(VITA_TITLEID "VTDY00001") # unchanged on purpose: the same id makes the install update the old app in place
+  # param.sfo wants NN.NN, so 1.2.3 becomes 01.23 (minor and patch must stay below 10).
+  string(REGEX MATCH "^([0-9]+)\\.([0-9])\\.([0-9])$" _v "${HOMETIDY_VERSION}")
+  if(NOT _v)
+    message(FATAL_ERROR "VERSION must look like 1.2.3 with single-digit minor and patch, got '${HOMETIDY_VERSION}'")
+  endif()
+  set(VITA_VERSION "0${CMAKE_MATCH_1}.${CMAKE_MATCH_2}${CMAKE_MATCH_3}")
 
-  add_executable(vitatidy src/vita/main.c src/vita/ui.c src/core/platform_vita.c ${CORE_SOURCES} third_party/sqlite3/sqlite3.c)
-  target_compile_definitions(vitatidy PRIVATE ${SQLITE_DEFS} _POSIX_C_SOURCE=200809L)
-  target_compile_options(vitatidy PRIVATE -Wall -Wextra -O2)
+  add_executable(hometidy src/vita/main.c src/vita/ui.c src/core/platform_vita.c ${CORE_SOURCES} third_party/sqlite3/sqlite3.c)
+  target_compile_definitions(hometidy PRIVATE ${SQLITE_DEFS} _POSIX_C_SOURCE=200809L APP_VERSION="${HOMETIDY_VERSION}")
+  target_compile_options(hometidy PRIVATE -Wall -Wextra -O2)
   set_source_files_properties(third_party/sqlite3/sqlite3.c PROPERTIES COMPILE_OPTIONS -w)
-  target_link_libraries(vitatidy vita2d freetype png jpeg z m c
+  target_link_libraries(hometidy vita2d freetype png jpeg z m c
     SceDisplay_stub SceGxm_stub SceCtrl_stub SceTouch_stub SceSysmodule_stub SceCommonDialog_stub
     ScePower_stub SceRtc_stub SceIofilemgr_stub ScePgf_stub ScePvf_stub SceAppMgr_stub)
 
-  vita_create_self(vitatidy.self vitatidy UNSAFE)
-  vita_create_vpk(vitatidy.vpk ${VITA_TITLEID} vitatidy.self
+  vita_create_self(hometidy.self hometidy UNSAFE)
+  vita_create_vpk(hometidy.vpk ${VITA_TITLEID} hometidy.self
     VERSION ${VITA_VERSION} NAME ${VITA_APP_NAME}
     FILE sce_sys/icon0.png sce_sys/icon0.png
     FILE sce_sys/livearea/contents/bg.png sce_sys/livearea/contents/bg.png

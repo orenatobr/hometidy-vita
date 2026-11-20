@@ -1,7 +1,7 @@
-# VitaTidy PSP list order. One file name per line, exactly as in ux0:pspemu/ISO.
+# HomeTidy PSP list order. One file name per line, exactly as in ux0:pspemu/ISO.
 # The first line ends up as the newest file, which Adrenaline lists first.
 # Files not listed here are placed alphabetically among the listed ones.
-# Copy this file to ux0:data/VitaTidy/psp-order.txt to change it.
+# Copy this file to ux0:data/HomeTidy/psp-order.txt to change it.
 
 3rd Birthday, The (USA) (PSP) (PSN).iso
 Castlevania - The Dracula X Chronicles (USA) (PSN).iso

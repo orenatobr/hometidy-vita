@@ -1,4 +1,4 @@
-# VitaTidy
+# HomeTidy (Vita)
 
 A PS Vita homebrew app that does two chores on the console itself, with no FTP and no computer:
 
@@ -11,9 +11,9 @@ It also reorders the Adrenaline game list, which sorts by file date.
 
 You need a Vita with custom firmware that allows unsafe homebrew.
 
-1. Download `VitaTidy.vpk` from the [latest release](https://github.com/orenatobr/VitaTidy/releases/latest).
+1. Download `HomeTidy.vpk` from the [latest release](https://github.com/orenatobr/hometidy-vita/releases/latest).
 2. Copy it to the Vita and install it with VitaShell. Accept the extended permissions prompt: the app has to write the LiveArea database.
-3. Open **VitaTidy** from the home screen.
+3. Open **HomeTidy** from the home screen.
 
 ## Use
 
@@ -34,7 +34,7 @@ The reorder leaves no holes between icons: system pages keep their icons and ord
 
 Apps listed in an order file keep that order. Anything else is placed alphabetically among them, ignoring a leading "The", "A" or "An". Unlisted apps whose id does not look like a game (`PCSE00120`, `NPNA00012`) go to the CFW page.
 
-The release ships the author's lists as defaults (`data/order.txt`, `data/psp-order.txt`). To use your own, copy them to `ux0:data/VitaTidy/` and edit:
+The release ships the author's lists as defaults (`data/order.txt`, `data/psp-order.txt`). To use your own, copy them to `ux0:data/HomeTidy/` and edit:
 
 ```
 [cfw]
@@ -47,14 +47,15 @@ The PSP file is one ISO file name per line, first line = newest.
 
 ## Safety
 
-- The first `app.db` is saved once as `ux0:data/VitaTidy/backup/app.db.orig`. Before each change the current one is saved as `app.db.last`.
+- The first `app.db` is saved once as `ux0:data/HomeTidy/backup/app.db.orig`. Before each change the current one is saved as `app.db.last`.
 - The new database is built in memory, checked with `PRAGMA integrity_check`, and only then written. If the write fails, the previous file is put back.
 - To undo a reorder: copy `backup/app.db.orig` (or `.last`) over `ur0:shell/db/app.db` with VitaShell, then restart.
-- Original icons are saved in `ux0:data/VitaTidy/originals/`. Toggling again restores them byte for byte.
+- Original icons are saved in `ux0:data/HomeTidy/originals/`. Toggling again restores them byte for byte.
 - A PSP icon is rewritten inside its original byte range, so the rest of the ISO is untouched. If the badged icon cannot fit, nothing is written.
 
 ## Troubleshooting
 
+- **Renamed from VitaTidy in 1.0.4.** The title id is unchanged, so installing the new VPK updates the old app in place. On first launch the app moves `ux0:data/VitaTidy` to `ux0:data/HomeTidy`, keeping your backups and original icons.
 - **Error `0x80101130` while installing.** Version 1.0.0 used the title id `VTIDY0001`. The installer wants four letters and five digits, so it was renamed to `VTDY00001` in 1.0.1. If you installed 1.0.0 before, nothing needs cleaning up.
 - **Error `0x8010113D` while installing.** The installer only accepts PNGs in `sce_sys` that are exactly 8-bit indexed: 24-bit is rejected, and so is a lower bit depth (PIL picks one on its own when `optimize` is on). `tools/make_assets.py` now forces 8 bits.
 
@@ -72,7 +73,7 @@ With Docker (the official VitaSDK image):
 docker run --rm -v "$PWD":/src -w /src vitasdk/vitasdk:latest sh -c \
   'cmake -S . -B build-vita -DCMAKE_TOOLCHAIN_FILE=$VITASDK/share/vita.toolchain.cmake -DCMAKE_BUILD_TYPE=Release \
    && cmake --build build-vita -j4'
-# result: build-vita/vitatidy.vpk
+# result: build-vita/hometidy.vpk
 ```
 
 The logic lives in `src/core` and has no console dependency, so it is tested on a computer:
@@ -84,6 +85,8 @@ cmake -S . -B build && cmake --build build && ctest --test-dir build --output-on
 The tests build a small ISO, a LiveArea database and icons, then run every task on them under ASan and UBSan, including mutated PNG and ISO inputs. `tools/` has small command line helpers for trying the tasks on copies of real files.
 
 `tools/make_assets.py` regenerates the icon and LiveArea art (needs Pillow).
+
+The `VERSION` file is the only place the version is written. CMake passes it to the app, the package (`param.sfo`) and the build, `make_assets.py` draws it on the LiveArea art, `tools/check_vpk.py` checks the package against it, and the release workflow refuses a tag that is not `v` plus its content. To release: edit `VERSION`, run `tools/make_assets.py`, merge, then tag `v<VERSION>`.
 
 ## License
 

@@ -1,7 +1,7 @@
-# VitaTidy LiveArea order. One title id per line; text after # is a comment.
+# HomeTidy LiveArea order. One title id per line; text after # is a comment.
 # Listed apps keep this order. Apps not listed here are placed alphabetically
 # (articles ignored) among the listed ones. Copy this file to
-# ux0:data/VitaTidy/order.txt to change it.
+# ux0:data/HomeTidy/order.txt to change it.
 
 [cfw]
 VITASHELL   # VitaShell

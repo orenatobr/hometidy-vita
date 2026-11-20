@@ -4,7 +4,10 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 
 BG, TILE, TILE2, GREEN, WHITE = (15, 23, 42), (30, 41, 59), (51, 65, 85), (34, 197, 94), (248, 250, 252)
-OUT = os.path.join(os.path.dirname(__file__), "..", "sce_sys")
+ROOT = os.path.join(os.path.dirname(__file__), "..")
+OUT = os.path.join(ROOT, "sce_sys")
+with open(os.path.join(ROOT, "VERSION"), encoding="utf-8") as fh:
+    VERSION = "v" + fh.read().strip()
 
 
 def font(size):
@@ -45,8 +48,9 @@ def background():
     im = Image.new("RGB", (840, 500), BG)
     d = ImageDraw.Draw(im)
     grid(d, 470, 70, 110, 18, 18)
-    d.text((60, 190), "VitaTidy", font=font(72), fill=WHITE)
-    d.text((64, 285), "Reorder the home screen.\nMark finished games.", font=font(26), fill=(148, 163, 184), spacing=10)
+    d.text((60, 190), "HomeTidy", font=font(72), fill=WHITE)
+    d.text((64, 274), VERSION, font=font(22), fill=GREEN)
+    d.text((64, 305), "Reorder the home screen.\nMark finished games.", font=font(26), fill=(148, 163, 184), spacing=10)
     save8(im, os.path.join(OUT, "livearea", "contents", "bg.png"))
 
 
@@ -54,7 +58,8 @@ def startup():
     im = Image.new("RGB", (280, 158), BG)
     d = ImageDraw.Draw(im)
     grid(d, 24, 28, 28, 6, 5)
-    d.text((140, 56), "VitaTidy", font=font(30), fill=WHITE)
+    d.text((140, 56), "HomeTidy", font=font(30), fill=WHITE)
+    d.text((142, 96), VERSION, font=font(16), fill=GREEN)
     save8(im, os.path.join(OUT, "livearea", "contents", "startup.png"))
 
 
