@@ -33,7 +33,7 @@ static char tmp_root[256];
 
 static void make_tmp(void)
 {
-    snprintf(tmp_root, sizeof tmp_root, "/tmp/vitatidy-test-XXXXXX");
+    snprintf(tmp_root, sizeof tmp_root, "/tmp/hometidy-test-XXXXXX");
     if (!mkdtemp(tmp_root)) { perror("mkdtemp"); exit(2); }
 }
 
@@ -474,7 +474,7 @@ static void setup_paths(Paths *p)
     path(p->db, sizeof p->db, "ur0/app.db");
     path(p->appmeta, sizeof p->appmeta, "ur0/appmeta");
     path(p->app, sizeof p->app, "ux0/app");
-    path(p->data, sizeof p->data, "ux0/data/VitaTidy");
+    path(p->data, sizeof p->data, "ux0/data/HomeTidy");
     path(p->defaults, sizeof p->defaults, "app0/data");
     path(p->psp_iso, sizeof p->psp_iso, "ux0/pspemu/ISO");
     char d[300];
@@ -606,6 +606,24 @@ static void test_psp(void)
     free(img.rgba);
 }
 
+static void test_adopt_dir(void)
+{
+    char old_dir[300], new_dir[300], file[300];
+    path(old_dir, sizeof old_dir, "adopt/old");
+    path(new_dir, sizeof new_dir, "adopt/new");
+    path(file, sizeof file, "adopt/old/backup/app.db.orig");
+    fs_mkdirs_for(file);
+    CHECK_INT(fs_write_all(file, "x", 1), 0);
+    CHECK_INT(fs_adopt_dir(old_dir, new_dir), 1);
+    path(file, sizeof file, "adopt/new/backup/app.db.orig");
+    CHECK(fs_exists(file));
+    CHECK(!fs_exists(old_dir));
+    CHECK_INT(fs_adopt_dir(old_dir, new_dir), 0); /* nothing left to move */
+    fs_mkdirs(old_dir);
+    CHECK_INT(fs_adopt_dir(old_dir, new_dir), 0); /* never merges into an existing dir */
+    CHECK(fs_exists(old_dir));
+}
+
 static void test_vita(void)
 {
     Paths p;
@@ -709,6 +727,7 @@ int main(void)
     test_fuzz();
     test_livearea();
     test_psp();
+    test_adopt_dir();
     test_vita();
     rm_tmp();
     printf("%d checks, %d failures\n", checks, failures);

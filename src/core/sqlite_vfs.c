@@ -71,7 +71,7 @@ static int vt_last_error(sqlite3_vfs *v, int n, char *b)
 int sqlite3_os_init(void)
 {
     static sqlite3_vfs vfs = {
-        1, sizeof(sqlite3_file), 512, NULL, "vitatidy-memory", NULL,
+        1, sizeof(sqlite3_file), 512, NULL, "hometidy-memory", NULL,
         vt_open, vt_delete, vt_access, vt_fullpath, NULL, NULL, NULL, NULL,
         vt_random, vt_sleep, vt_time, vt_last_error, NULL, NULL, NULL, NULL,
     };

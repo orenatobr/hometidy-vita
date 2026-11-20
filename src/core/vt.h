@@ -16,6 +16,8 @@ int fs_read_all(const char *path, uint8_t **buf, size_t *len, size_t max_len);
 int fs_write_all(const char *path, const void *buf, size_t len);
 int fs_exists(const char *path);
 int fs_remove(const char *path);
+/* Renames old_dir to new_dir when only the old one exists. Returns 1 if it moved, 0 if nothing was done, -1 on error. */
+int fs_adopt_dir(const char *old_dir, const char *new_dir);
 /* Creates every directory component of path (like mkdir -p). */
 int fs_mkdirs(const char *path);
 int fs_copy(const char *from, const char *to);

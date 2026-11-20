@@ -17,6 +17,12 @@ int fs_remove(const char *path)
     return remove(path);
 }
 
+int fs_adopt_dir(const char *old_dir, const char *new_dir)
+{
+    if (!fs_exists(old_dir) || fs_exists(new_dir)) return 0;
+    return rename(old_dir, new_dir) == 0 ? 1 : -1;
+}
+
 int fs_read_all(const char *path, uint8_t **buf, size_t *len, size_t max_len)
 {
     FILE *f = fopen(path, "rb");

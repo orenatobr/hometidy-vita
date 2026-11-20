@@ -1,4 +1,4 @@
-/* VitaTidy: reorder the LiveArea and the Adrenaline list, and mark games as completed. */
+/* HomeTidy: reorder the LiveArea and the Adrenaline list, and mark games as completed. */
 #include <psp2/ctrl.h>
 #include <psp2/kernel/processmgr.h>
 #include <psp2/touch.h>
@@ -9,7 +9,6 @@
 #include "../core/tasks.h"
 #include "ui.h"
 
-#define APP_VERSION "1.0.0"
 #define ROW_H 44
 #define LIST_Y 108
 #define LIST_ROWS 9
@@ -193,7 +192,7 @@ static void update_menu(const Input *in)
 
 static void draw_menu(void)
 {
-    ui_header("VitaTidy", "Keep the home screen tidy");
+    ui_header("HomeTidy", "Keep the home screen tidy");
     ui_text(SCREEN_W - 32 - ui_text_width(0.8f, "v" APP_VERSION), 56, COL_DIM, 0.8f, "v" APP_VERSION);
     for (int i = 0; i < 4; i++) {
         int y = 120 + i * 90;
@@ -219,7 +218,7 @@ static void apply_plan(void)
         busy("Saving a backup and rewriting the LiveArea...");
         if (task_livearea_apply(&S.paths, &S.la, err, sizeof err) != 0) { set_message(0, 0, "Reorder failed", err); return; }
         set_message(1, 1, "LiveArea reordered",
-                    "Restart the console now so the new order loads. A backup of the old database is in ux0:data/VitaTidy/backup.");
+                    "Restart the console now so the new order loads. A backup of the old database is in ux0:data/HomeTidy/backup.");
     } else {
         busy("Rewriting file dates...");
         if (task_psp_apply(&S.paths, &S.psp, err, sizeof err) != 0) { set_message(0, 0, "Some dates were not applied", err); return; }

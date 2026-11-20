@@ -20,7 +20,9 @@ void paths_vita(Paths *p)
     snprintf(p->db, sizeof p->db, "ur0:shell/db/app.db");
     snprintf(p->appmeta, sizeof p->appmeta, "ur0:appmeta");
     snprintf(p->app, sizeof p->app, "ux0:app");
-    snprintf(p->data, sizeof p->data, "ux0:data/VitaTidy");
+    /* The app was called VitaTidy up to 1.0.3: keep its backups and original icons. */
+    fs_adopt_dir("ux0:data/VitaTidy", "ux0:data/HomeTidy");
+    snprintf(p->data, sizeof p->data, "ux0:data/HomeTidy");
     snprintf(p->defaults, sizeof p->defaults, "app0:data");
     static const char *const roots[] = {"ux0:pspemu/ISO", "uma0:pspemu/ISO", "xmc0:pspemu/ISO", "imc0:pspemu/ISO"};
     snprintf(p->psp_iso, sizeof p->psp_iso, "%s", roots[0]);
